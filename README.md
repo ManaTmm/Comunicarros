@@ -1,4 +1,4 @@
-# Comunicarro
+# Comunicarros
 
 **Marketplace e rede de conexão para oficinas automotivas.**
 
@@ -149,3 +149,9 @@ As funcionalidades da plataforma ainda estão sendo implementadas.
 ## Objetivo educacional
 
 O Comunicarros também é um projeto de aprendizado e portfólio, desenvolvido para aplicar conhecimentos de desenvolvimento web, modelagem de dados, arquitetura de software, integração entre sistemas e controle de versão.
+
+> **Status: Em desenvolvimento**
+>
+> O Comunicarros é um projeto independente que ainda está em fase de desenvolvimento. Algumas funcionalidades estão incompletas ou ainda não foram implementadas.
+>
+> Este repositório documenta o progresso do projeto, incluindo sua estrutura, implementação e evolução ao longo do desenvolvimento.

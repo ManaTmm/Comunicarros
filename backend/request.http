@@ -1,0 +1,94 @@
+### ==========================================
+### USUÁRIOS
+### ==========================================
+
+### 1. Cadastrar usuário
+POST http://localhost:3000/api/usuarios
+Content-Type: application/json
+
+{
+    "nome": "Usuario Teste",
+    "email": "teste@comunicarros.com",
+    "senha": "Senha123!",
+    "telefone": "33999999999"
+}
+
+### 2. Fazer login
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "teste@comunicarros.com",
+    "senha": "Senha123!"
+}
+
+### 3. Consultar perfil
+GET http://localhost:3000/api/usuarios/perfil
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0ZUBjb211bmljYXJyb3MuY29tIiwiaWF0IjoxNzk0MTc5MzgzLCJleHAiOjE3OTQyNjU3ODN9.goUxCpIwvVr0wL1BV9zu30lgGa5kOMVibAC3N0zebnw
+
+### ==========================================
+### OFICINAS
+### ==========================================
+
+### 4. Cadastrar oficina
+POST http://localhost:3000/api/oficinas
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0ZUBjb211bmljYXJyb3MuY29tIiwiaWF0IjoxNzk0MTc5MzgzLCJleHAiOjE3OTQyNjU3ODN9.goUxCpIwvVr0wL1BV9zu30lgGa5kOMVibAC3N0zebnw
+
+{
+    "nome": "Oficina Teste",
+    "descricao": "Oficina especializada em manutenção automotiva.",
+    "cnpj": "12.345.678/0001-90",
+    "telefone": "33999999999",
+    "cep": "35000000",
+    "estado": "MG",
+    "cidade": "Governador Valadares",
+    "bairro": "Centro",
+    "endereco": "Rua de Teste",
+    "numero": "100",
+    "complemento": "Sala 2"
+}
+
+### 5. Listar minhas oficinas
+GET http://localhost:3000/api/oficinas
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0ZUBjb211bmljYXJyb3MuY29tIiwiaWF0IjoxNzk0MTc5MzgzLCJleHAiOjE3OTQyNjU3ODN9.goUxCpIwvVr0wL1BV9zu30lgGa5kOMVibAC3N0zebnw
+
+### 6. Cadastrar peça
+POST http://localhost:3000/api/pecas/oficina/2
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0ZUBjb211bmljYXJyb3MuY29tIiwiaWF0IjoxNzk0MTc5MzgzLCJleHAiOjE3OTQyNjU3ODN9.goUxCpIwvVr0wL1BV9zu30lgGa5kOMVibAC3N0zebnw
+
+{
+    "nome": "Farol dianteiro esquerdo",
+    "descricao": "Farol original em bom estado.",
+    "marca": "Volkswagen",
+    "modelo": "Gol",
+    "ano": 2011,
+    "lado": "esquerdo",
+    "posicao": "dianteiro",
+    "tipo": "original",
+    "estado_conservacao": "usado",
+    "quantidade": 1,
+    "preco": 250.00,
+    "visivel": true
+}
+
+### 7. Listar peças da oficina
+GET http://localhost:3000/api/pecas/oficina/2
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0ZUBjb211bmljYXJyb3MuY29tIiwiaWF0IjoxNzk0MTc5MzgzLCJleHAiOjE3OTQyNjU3ODN9.goUxCpIwvVr0wL1BV9zu30lgGa5kOMVibAC3N0zebnw
+
+### 8. Editar peça
+PATCH http://localhost:3000/api/pecas/oficina/2/peca/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0ZUBjb211bmljYXJyb3MuY29tIiwiaWF0IjoxNzk0MTc5MzgzLCJleHAiOjE3OTQyNjU3ODN9.goUxCpIwvVr0wL1BV9zu30lgGa5kOMVibAC3N0zebnw
+
+{
+    "preco": 280.00,
+    "quantidade": 3,
+    "descricao": "Farol original revisado, em ótimo estado."
+}
+
+
+### 9. Excluir peça
+DELETE http://localhost:3000/api/pecas/oficina/2/peca/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0ZUBjb211bmljYXJyb3MuY29tIiwiaWF0IjoxNzk0MTc5MzgzLCJleHAiOjE3OTQyNjU3ODN9.goUxCpIwvVr0wL1BV9zu30lgGa5kOMVibAC3N0zebnw

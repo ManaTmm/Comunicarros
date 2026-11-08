@@ -1,12 +1,20 @@
+require('dotenv').config()
+
 const express = require('express')
 const cors = require('cors')
-require('dotenv').config()
 const db = require('./config/database')
-
 const app = express()
+const usuarioRoutes = require('./routes/usuarioRoutes')
+const authRoutes = require('./routes/authRoutes')
+const oficinaRoutes = require('./routes/oficinaRoutes')
+const pecaRoutes = require('./routes/pecaRoutes')
 
 app.use(cors())
 app.use(express.json())
+app.use('/api/usuarios', usuarioRoutes)
+app.use('/api/auth', authRoutes)
+app.use('/api/oficinas', oficinaRoutes)
+app.use('/api/pecas', pecaRoutes)
 
 const PORT = process.env.PORT || 3000
 
