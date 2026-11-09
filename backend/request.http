@@ -2,6 +2,8 @@
 ### USUÁRIOS
 ### ==========================================
 
+@token = COLE_SEU_TOKEN_AQUI
+
 ### 1. Cadastrar usuário
 POST http://localhost:3000/api/usuarios
 Content-Type: application/json
@@ -24,7 +26,7 @@ Content-Type: application/json
 
 ### 3. Consultar perfil
 GET http://localhost:3000/api/usuarios/perfil
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0ZUBjb211bmljYXJyb3MuY29tIiwiaWF0IjoxNzk0MTc5MzgzLCJleHAiOjE3OTQyNjU3ODN9.goUxCpIwvVr0wL1BV9zu30lgGa5kOMVibAC3N0zebnw
+Authorization: Bearer {{token}}
 
 ### ==========================================
 ### OFICINAS
@@ -33,7 +35,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiO
 ### 4. Cadastrar oficina
 POST http://localhost:3000/api/oficinas
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0ZUBjb211bmljYXJyb3MuY29tIiwiaWF0IjoxNzk0MTc5MzgzLCJleHAiOjE3OTQyNjU3ODN9.goUxCpIwvVr0wL1BV9zu30lgGa5kOMVibAC3N0zebnw
+Authorization: Bearer {{token}}
 
 {
     "nome": "Oficina Teste",
@@ -51,12 +53,12 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiO
 
 ### 5. Listar minhas oficinas
 GET http://localhost:3000/api/oficinas
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0ZUBjb211bmljYXJyb3MuY29tIiwiaWF0IjoxNzk0MTc5MzgzLCJleHAiOjE3OTQyNjU3ODN9.goUxCpIwvVr0wL1BV9zu30lgGa5kOMVibAC3N0zebnw
+Authorization: Bearer {{token}}
 
 ### 6. Cadastrar peça
 POST http://localhost:3000/api/pecas/oficina/2
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0ZUBjb211bmljYXJyb3MuY29tIiwiaWF0IjoxNzk0MTc5MzgzLCJleHAiOjE3OTQyNjU3ODN9.goUxCpIwvVr0wL1BV9zu30lgGa5kOMVibAC3N0zebnw
+Authorization: Bearer {{token}}
 
 {
     "nome": "Farol dianteiro esquerdo",
@@ -75,12 +77,12 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiO
 
 ### 7. Listar peças da oficina
 GET http://localhost:3000/api/pecas/oficina/2
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0ZUBjb211bmljYXJyb3MuY29tIiwiaWF0IjoxNzk0MTc5MzgzLCJleHAiOjE3OTQyNjU3ODN9.goUxCpIwvVr0wL1BV9zu30lgGa5kOMVibAC3N0zebnw
+Authorization: Bearer {{token}}
 
 ### 8. Editar peça
 PATCH http://localhost:3000/api/pecas/oficina/2/peca/1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0ZUBjb211bmljYXJyb3MuY29tIiwiaWF0IjoxNzk0MTc5MzgzLCJleHAiOjE3OTQyNjU3ODN9.goUxCpIwvVr0wL1BV9zu30lgGa5kOMVibAC3N0zebnw
+Authorization: Bearer {{token}}
 
 {
     "preco": 280.00,
@@ -91,4 +93,4 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiO
 
 ### 9. Excluir peça
 DELETE http://localhost:3000/api/pecas/oficina/2/peca/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0ZUBjb211bmljYXJyb3MuY29tIiwiaWF0IjoxNzk0MTc5MzgzLCJleHAiOjE3OTQyNjU3ODN9.goUxCpIwvVr0wL1BV9zu30lgGa5kOMVibAC3N0zebnw
+Authorization: Bearer {{token}}
