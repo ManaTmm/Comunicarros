@@ -2,7 +2,7 @@
 ### USUÁRIOS
 ### ==========================================
 
-@token = COLE_SEU_TOKEN_AQUI
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0ZUBjb211bmljYXJyb3MuY29tIiwiaWF0IjoxNzk0MTgyNTkwLCJleHAiOjE3OTQyNjg5OTB9.18U6hD3RWB8Z0wglG8Vlu9MWxzkYEy_j8ETOJuq6098
 
 ### 1. Cadastrar usuário
 POST http://localhost:3000/api/usuarios
@@ -93,4 +93,37 @@ Authorization: Bearer {{token}}
 
 ### 9. Excluir peça
 DELETE http://localhost:3000/api/pecas/oficina/2/peca/1
+Authorization: Bearer {{token}}
+
+### 10. Cadastrar serviço
+POST http://localhost:3000/api/servicos/oficina/2
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "nome": "Pintura automotiva",
+    "descricao": "Serviço completo de preparação e pintura automotiva.",
+    "preco": 1500.00,
+    "visivel": true
+}
+
+
+### 11. Listar serviços
+GET http://localhost:3000/api/servicos/oficina/2
+Authorization: Bearer {{token}}
+
+
+### 12. Editar serviço
+PATCH http://localhost:3000/api/servicos/oficina/2/servico/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "preco": 1800.00,
+    "descricao": "Preparação, aplicação de tinta e verniz."
+}
+
+
+### 13. Excluir serviço
+DELETE http://localhost:3000/api/servicos/oficina/2/servico/1
 Authorization: Bearer {{token}}

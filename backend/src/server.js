@@ -8,6 +8,7 @@ const usuarioRoutes = require('./routes/usuarioRoutes')
 const authRoutes = require('./routes/authRoutes')
 const oficinaRoutes = require('./routes/oficinaRoutes')
 const pecaRoutes = require('./routes/pecaRoutes')
+const servicoRoutes = require('./routes/servicoRoutes')
 
 app.use(cors())
 app.use(express.json())
@@ -15,6 +16,7 @@ app.use('/api/usuarios', usuarioRoutes)
 app.use('/api/auth', authRoutes)
 app.use('/api/oficinas', oficinaRoutes)
 app.use('/api/pecas', pecaRoutes)
+app.use('/api/servicos', servicoRoutes)
 
 const PORT = process.env.PORT || 3000
 
