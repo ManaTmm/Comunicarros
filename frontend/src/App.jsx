@@ -1,19 +1,33 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
-function Home() {
-  return (
-    <div className="container mt-5">
-      <h1>Comunicarros</h1>
-      <p>Marketplace automotivo.</p>
-    </div>
-  )
-}
+import Home from './pages/Home'
+import Oficina from './pages/Oficina'
+import Login from './pages/Login'
+import Cadastro from './pages/Cadastro'
+import Painel from './pages/Painel'
+
+import ProtectedRoute from './components/ProtectedRoute'
+import DashboardLayout from './layouts/DashboardLayout'
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+
         <Route path="/" element={<Home />} />
+        <Route path="/oficina/:id" element={<Oficina />} />
+
+        <Route path="/login" element={<Login />} />
+        <Route path="/cadastro" element={<Cadastro />} />
+
+        <Route element={<ProtectedRoute />}>
+          <Route path="/painel" element={<DashboardLayout />}>
+
+            <Route index element={<Painel />} />
+
+          </Route>
+        </Route>
+
       </Routes>
     </BrowserRouter>
   )
