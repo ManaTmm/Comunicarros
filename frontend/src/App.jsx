@@ -5,9 +5,12 @@ import Oficina from './pages/Oficina'
 import Login from './pages/Login'
 import Cadastro from './pages/Cadastro'
 import Painel from './pages/Painel'
-
+import MinhaOficina from './pages/MinhaOficina'
 import ProtectedRoute from './components/ProtectedRoute'
 import DashboardLayout from './layouts/DashboardLayout'
+import Estoque from './pages/Estoque'
+import Servicos from './pages/Servicos'
+import Perfil from './pages/Perfil'
 
 function App() {
   return (
@@ -20,10 +23,16 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/cadastro" element={<Cadastro />} />
 
-        <Route element={<ProtectedRoute />}>
-          <Route path="/painel" element={<DashboardLayout />}>
 
+        <Route element={<ProtectedRoute />}>
+
+          <Route path="/painel" element={<DashboardLayout />}>
             <Route index element={<Painel />} />
+            
+            <Route path="oficina" element={<MinhaOficina />} />
+            <Route path="estoque" element={<Estoque />} />
+            <Route path="servicos" element={<Servicos />} />
+            <Route path="perfil" element={<Perfil />} />
 
           </Route>
         </Route>

@@ -2,8 +2,7 @@
 ### USUÁRIOS
 ### ==========================================
 
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0ZUBjb211bmljYXJyb3MuY29tIiwiaWF0IjoxNzk0MTgyNTkwLCJleHAiOjE3OTQyNjg5OTB9.18U6hD3RWB8Z0wglG8Vlu9MWxzkYEy_j8ETOJuq6098
-
+@token = Seu_Token_Aqui
 ### 1. Cadastrar usuário
 POST http://localhost:3000/api/usuarios
 Content-Type: application/json

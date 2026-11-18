@@ -122,7 +122,89 @@ async function listarOficinas(req, res) {
     }
 }
 
+async function editarOficina(req, res) {
+    try {
+        const usuarioId = req.usuario.id
+        const oficinaId = req.params.oficinaId
+
+        const {
+            nome,
+            descricao,
+            cnpj,
+            telefone,
+            cep,
+            estado,
+            cidade,
+            bairro,
+            endereco,
+            numero,
+            complemento
+        } = req.body
+
+        if (!nome) {
+            return res.status(400).json({
+                mensagem: 'O nome da oficina é obrigatório.'
+            })
+        }
+
+        const [resultado] = await db.query(
+            `UPDATE oficinas
+             SET nome = ?,
+                 descricao = ?,
+                 cnpj = ?,
+                 telefone = ?,
+                 cep = ?,
+                 estado = ?,
+                 cidade = ?,
+                 bairro = ?,
+                 endereco = ?,
+                 numero = ?,
+                 complemento = ?
+             WHERE id = ? AND usuario_id = ?`,
+            [
+                nome,
+                descricao || null,
+                cnpj || null,
+                telefone || null,
+                cep || null,
+                estado || null,
+                cidade || null,
+                bairro || null,
+                endereco || null,
+                numero || null,
+                complemento || null,
+                oficinaId,
+                usuarioId
+            ]
+        )
+
+        if (resultado.affectedRows === 0) {
+            return res.status(404).json({
+                mensagem: 'Oficina não encontrada.'
+            })
+        }
+
+        return res.status(200).json({
+            mensagem: 'Oficina atualizada com sucesso!'
+        })
+
+    } catch (error) {
+        console.error('Erro ao editar oficina:', error)
+
+        if (error.code === 'ER_DUP_ENTRY') {
+            return res.status(409).json({
+                mensagem: 'Este CNPJ já está cadastrado.'
+            })
+        }
+
+        return res.status(500).json({
+            mensagem: 'Erro interno ao editar oficina.'
+        })
+    }
+}
+
 module.exports = {
     cadastrarOficina,
-    listarOficinas
+    listarOficinas,
+    editarOficina
 }
