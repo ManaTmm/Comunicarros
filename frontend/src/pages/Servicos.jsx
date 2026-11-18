@@ -1,144 +1,230 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import api from '../services/api'
+import ServicoModal from '../components/servicos/ServicoModal'
+import ServicosTabela from '../components/servicos/ServicosTabela'
+
+const formularioInicial = {
+  nome: '',
+  descricao: '',
+  preco: '',
+  visivel: true
+}
+
+function formatarPreco(valor) {
+  if (!valor) return 'A combinar'
+
+  return Number(valor).toLocaleString('pt-BR', {
+    style: 'currency',
+    currency: 'BRL'
+  })
+}
+
+function mensagemDaApi(error, fallback) {
+  return error.response?.data?.mensagem || fallback
+}
+
+function normalizarServicos(servicosBanco) {
+  return servicosBanco.map((servico) => ({
+    ...servico,
+    preco: servico.preco === null ? null : Number(servico.preco),
+    visivel: Number(servico.visivel) === 1
+  }))
+}
 
 function Servicos() {
-  const [servicos, setServicos] = useState([
-    {
-      id: 1,
-      nome: 'Pintura automotiva',
-      descricao: 'Pintura completa ou parcial de veículos.',
-      preco: 1500,
-      visivel: true,
-    },
-    {
-      id: 2,
-      nome: 'Martelinho de ouro',
-      descricao: 'Reparação de pequenos amassados sem pintura.',
-      preco: 250,
-      visivel: true,
-    },
-    {
-      id: 3,
-      nome: 'Polimento',
-      descricao: 'Polimento técnico e revitalização da pintura.',
-      preco: 180,
-      visivel: false,
-    },
-  ])
-
+  const [servicos, setServicos] = useState([])
+  const [oficinaId, setOficinaId] = useState(null)
+  const [carregando, setCarregando] = useState(true)
+  const [salvando, setSalvando] = useState(false)
+  const [erro, setErro] = useState('')
+  const [erroFormulario, setErroFormulario] = useState('')
   const [pesquisa, setPesquisa] = useState('')
   const [modalAberto, setModalAberto] = useState(false)
   const [servicoEditando, setServicoEditando] = useState(null)
+  const [formulario, setFormulario] = useState(formularioInicial)
 
-  const [formulario, setFormulario] = useState({
-    nome: '',
-    descricao: '',
-    preco: '',
-    visivel: true,
-  })
+  useEffect(() => {
+    let ativo = true
+
+    async function carregarServicos() {
+      try {
+        setCarregando(true)
+        setErro('')
+
+        const respostaOficina = await api.get('/oficinas')
+        const oficinas = respostaOficina.data.oficinas || []
+
+        if (oficinas.length === 0) {
+          setErro('Você precisa cadastrar sua oficina primeiro.')
+          return
+        }
+
+        const id = oficinas[0].id
+        const respostaServicos = await api.get(`/servicos/oficina/${id}`)
+
+        if (ativo) {
+          setOficinaId(id)
+          setServicos(normalizarServicos(respostaServicos.data.servicos || []))
+        }
+      } catch (error) {
+        if (ativo) {
+          setErro(mensagemDaApi(error, 'Não foi possível carregar os serviços.'))
+        }
+      } finally {
+        if (ativo) setCarregando(false)
+      }
+    }
+
+    carregarServicos()
+
+    return () => {
+      ativo = false
+    }
+  }, [])
 
   function abrirCadastro() {
     setServicoEditando(null)
-
-    setFormulario({
-      nome: '',
-      descricao: '',
-      preco: '',
-      visivel: true,
-    })
-
+    setFormulario(formularioInicial)
+    setErroFormulario('')
     setModalAberto(true)
   }
 
   function abrirEdicao(servico) {
     setServicoEditando(servico)
-
     setFormulario({
       nome: servico.nome,
-      descricao: servico.descricao,
-      preco: servico.preco,
-      visivel: servico.visivel,
+      descricao: servico.descricao || '',
+      preco: servico.preco ?? '',
+      visivel: servico.visivel
     })
-
+    setErroFormulario('')
     setModalAberto(true)
   }
 
-  function atualizarFormulario(event) {
-    const { name, value, type, checked } = event.target
+  function fecharModal() {
+    if (salvando) return
+
+    setModalAberto(false)
+    setServicoEditando(null)
+    setFormulario(formularioInicial)
+    setErroFormulario('')
+  }
+
+  function atualizarFormulario(evento) {
+    const { name, value, type, checked } = evento.target
 
     setFormulario((anterior) => ({
       ...anterior,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: type === 'checkbox' ? checked : value
     }))
   }
 
-  function salvarServico(event) {
-    event.preventDefault()
+  async function salvarServico(evento) {
+    evento.preventDefault()
 
-    if (!formulario.nome.trim()) {
-      alert('Informe o nome do serviço.')
+    if (!oficinaId) {
+      setErroFormulario('Não foi possível identificar sua oficina.')
       return
     }
 
-    const novoServico = {
+    const dadosServico = {
       ...formulario,
       nome: formulario.nome.trim(),
-      preco: Number(formulario.preco) || 0,
+      descricao: formulario.descricao.trim() || null,
+      preco: formulario.preco === '' ? null : Number(formulario.preco)
     }
 
-    if (servicoEditando) {
-      setServicos((anteriores) =>
-        anteriores.map((servico) =>
-          servico.id === servicoEditando.id
-            ? { ...servico, ...novoServico }
-            : servico
+    if (!dadosServico.nome) {
+      setErroFormulario('Informe o nome do serviço.')
+      return
+    }
+
+    try {
+      setSalvando(true)
+      setErroFormulario('')
+
+      if (servicoEditando) {
+        await api.patch(
+          `/servicos/oficina/${oficinaId}/servico/${servicoEditando.id}`,
+          dadosServico
         )
-      )
-    } else {
-      setServicos((anteriores) => [
-        ...anteriores,
-        {
-          id: Date.now(),
-          ...novoServico,
-        },
-      ])
-    }
+        setServicos((anteriores) =>
+          anteriores.map((servico) =>
+            servico.id === servicoEditando.id
+              ? { ...servico, ...dadosServico }
+              : servico
+          )
+        )
+      } else {
+        const resposta = await api.post(
+          `/servicos/oficina/${oficinaId}`,
+          dadosServico
+        )
+        const servicoCriado = normalizarServicos([
+          { ...dadosServico, ...resposta.data.servico }
+        ])[0]
+        setServicos((anteriores) => [servicoCriado, ...anteriores])
+      }
 
-    setModalAberto(false)
+      setModalAberto(false)
+      setServicoEditando(null)
+      setFormulario(formularioInicial)
+    } catch (error) {
+      setErroFormulario(
+        mensagemDaApi(error, 'Não foi possível salvar o serviço.')
+      )
+    } finally {
+      setSalvando(false)
+    }
   }
 
-  function excluirServico(id) {
+  async function excluirServico(id) {
     const confirmar = window.confirm(
       'Tem certeza que deseja excluir este serviço?'
     )
 
-    if (!confirmar) return
+    if (!confirmar || !oficinaId) return
 
-    setServicos((anteriores) =>
-      anteriores.filter((servico) => servico.id !== id)
-    )
-  }
-
-  function alternarVisibilidade(id) {
-    setServicos((anteriores) =>
-      anteriores.map((servico) =>
-        servico.id === id
-          ? { ...servico, visivel: !servico.visivel }
-          : servico
+    try {
+      setSalvando(true)
+      setErro('')
+      await api.delete(`/servicos/oficina/${oficinaId}/servico/${id}`)
+      setServicos((anteriores) =>
+        anteriores.filter((servico) => servico.id !== id)
       )
-    )
+    } catch (error) {
+      setErro(mensagemDaApi(error, 'Não foi possível excluir o serviço.'))
+    } finally {
+      setSalvando(false)
+    }
   }
 
-  const servicosFiltrados = servicos.filter((servico) =>
-    servico.nome.toLowerCase().includes(pesquisa.toLowerCase())
-  )
+  async function alternarVisibilidade(id) {
+    const servico = servicos.find((item) => item.id === id)
 
-  function formatarPreco(valor) {
-    if (!valor) return 'A combinar'
+    if (!servico || !oficinaId) return
 
-    return valor.toLocaleString('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    })
+    try {
+      setSalvando(true)
+      setErro('')
+      await api.patch(
+        `/servicos/oficina/${oficinaId}/servico/${id}`,
+        { visivel: !servico.visivel }
+      )
+      setServicos((anteriores) =>
+        anteriores.map((item) =>
+          item.id === id
+            ? { ...item, visivel: !servico.visivel }
+            : item
+        )
+      )
+    } catch (error) {
+      setErro(
+        mensagemDaApi(error, 'Não foi possível alterar a visibilidade.')
+      )
+    } finally {
+      setSalvando(false)
+    }
   }
 
   return (
@@ -152,196 +238,49 @@ function Servicos() {
           </p>
         </div>
 
-        <button className="btn btn-danger" onClick={abrirCadastro}>
+        <button
+          className="btn btn-danger"
+          onClick={abrirCadastro}
+          disabled={carregando || oficinaId === null || salvando}
+        >
           + Novo serviço
         </button>
       </div>
+
+      {erro && (
+        <div className="alert alert-danger" role="alert">
+          {erro}
+        </div>
+      )}
+      {carregando && <p role="status">Carregando serviços...</p>}
 
       <div className="dashboard-section-header">
         <h4>Seus serviços</h4>
         <span>{servicos.length} cadastrados</span>
       </div>
 
-      <div className="card border-0 shadow-sm">
-        <div className="card-body">
-          <div className="mb-4">
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Pesquisar serviço..."
-              value={pesquisa}
-              onChange={(event) => setPesquisa(event.target.value)}
-            />
-          </div>
+      <ServicosTabela
+        servicos={servicos}
+        pesquisa={pesquisa}
+        carregando={carregando}
+        salvando={salvando}
+        onPesquisaChange={setPesquisa}
+        onAlternarVisibilidade={alternarVisibilidade}
+        onEditar={abrirEdicao}
+        onExcluir={excluirServico}
+        formatarPreco={formatarPreco}
+      />
 
-          <div className="table-responsive">
-            <table className="table align-middle">
-              <thead>
-                <tr>
-                  <th>Serviço</th>
-                  <th>Preço</th>
-                  <th>Visibilidade</th>
-                  <th className="text-end">Ações</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {servicosFiltrados.map((servico) => (
-                  <tr key={servico.id}>
-                    <td>
-                      <strong>{servico.nome}</strong>
-                      <div className="text-secondary small">
-                        {servico.descricao}
-                      </div>
-                    </td>
-
-                    <td>{formatarPreco(servico.preco)}</td>
-
-                    <td>
-                      <span
-                        className={`badge ${
-                          servico.visivel
-                            ? 'bg-success'
-                            : 'bg-secondary'
-                        }`}
-                      >
-                        {servico.visivel ? 'Visível' : 'Oculto'}
-                      </span>
-                    </td>
-
-                    <td>
-                      <div className="d-flex justify-content-end gap-2">
-                        <button
-                          className="btn btn-sm btn-outline-secondary"
-                          onClick={() => alternarVisibilidade(servico.id)}
-                          title="Alterar visibilidade"
-                        >
-                          {servico.visivel ? 'Ocultar' : 'Exibir'}
-                        </button>
-
-                        <button
-                          className="btn btn-sm btn-outline-primary"
-                          onClick={() => abrirEdicao(servico)}
-                        >
-                          Editar
-                        </button>
-
-                        <button
-                          className="btn btn-sm btn-outline-danger"
-                          onClick={() => excluirServico(servico.id)}
-                        >
-                          Excluir
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-
-                {servicosFiltrados.length === 0 && (
-                  <tr>
-                    <td colSpan="4" className="text-center py-5">
-                      <p className="text-secondary mb-0">
-                        Nenhum serviço encontrado.
-                      </p>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      {modalAberto && (
-        <div className="modal-backdrop-custom">
-          <div className="modal-content-custom">
-            <div className="d-flex justify-content-between align-items-center mb-4">
-              <h4 className="mb-0">
-                {servicoEditando ? 'Editar serviço' : 'Novo serviço'}
-              </h4>
-
-              <button
-                className="btn-close"
-                onClick={() => setModalAberto(false)}
-              />
-            </div>
-
-            <form onSubmit={salvarServico}>
-              <div className="mb-3">
-                <label className="form-label">Nome do serviço</label>
-                <input
-                  type="text"
-                  name="nome"
-                  className="form-control"
-                  placeholder="Ex.: Pintura automotiva"
-                  value={formulario.nome}
-                  onChange={atualizarFormulario}
-                  required
-                />
-              </div>
-
-              <div className="mb-3">
-                <label className="form-label">Descrição</label>
-                <textarea
-                  name="descricao"
-                  className="form-control"
-                  rows="3"
-                  placeholder="Descreva o serviço oferecido..."
-                  value={formulario.descricao}
-                  onChange={atualizarFormulario}
-                />
-              </div>
-
-              <div className="mb-3">
-                <label className="form-label">Preço (R$)</label>
-                <input
-                  type="number"
-                  name="preco"
-                  className="form-control"
-                  placeholder="Ex.: 250"
-                  min="0"
-                  step="0.01"
-                  value={formulario.preco}
-                  onChange={atualizarFormulario}
-                />
-
-                <small className="text-secondary">
-                  Deixe em branco ou informe zero para exibir como "A combinar".
-                </small>
-              </div>
-
-              <div className="form-check mb-4">
-                <input
-                  type="checkbox"
-                  name="visivel"
-                  id="visivel"
-                  className="form-check-input"
-                  checked={formulario.visivel}
-                  onChange={atualizarFormulario}
-                />
-
-                <label className="form-check-label" htmlFor="visivel">
-                  Exibir serviço no catálogo público
-                </label>
-              </div>
-
-              <div className="d-flex justify-content-end gap-2">
-                <button
-                  type="button"
-                  className="btn btn-outline-secondary"
-                  onClick={() => setModalAberto(false)}
-                >
-                  Cancelar
-                </button>
-
-                <button type="submit" className="btn btn-danger">
-                  {servicoEditando ? 'Salvar alterações' : 'Cadastrar serviço'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <ServicoModal
+        aberto={modalAberto}
+        servicoEditando={servicoEditando}
+        formulario={formulario}
+        erro={erroFormulario}
+        salvando={salvando}
+        onCampoChange={atualizarFormulario}
+        onSalvar={salvarServico}
+        onFechar={fecharModal}
+      />
     </div>
   )
 }
