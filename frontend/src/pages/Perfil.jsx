@@ -1,41 +1,95 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import PerfilFormulario from '../components/perfil/PerfilFormulario'
+import PerfilResumo from '../components/perfil/PerfilResumo'
+import PerfilSeguranca from '../components/perfil/PerfilSeguranca'
+import api from '../services/api'
 
 function Perfil() {
-  const usuarioSalvo = JSON.parse(
-    localStorage.getItem('usuario') || '{}'
-  )
-
-  const [formulario, setFormulario] = useState({
-    nome: usuarioSalvo.nome || '',
-    email: usuarioSalvo.email || '',
-    telefone: usuarioSalvo.telefone || '',
-  })
-
+  const [usuario, setUsuario] = useState(null)
+  const [formulario, setFormulario] = useState({ nome: '', email: '', telefone: '' })
+  const [carregando, setCarregando] = useState(true)
+  const [salvando, setSalvando] = useState(false)
+  const [erro, setErro] = useState('')
   const [mensagem, setMensagem] = useState('')
 
-  function atualizarFormulario(event) {
-    const { name, value } = event.target
+  useEffect(() => {
+    let ativo = true
+
+    async function carregarPerfil() {
+      try {
+        const resposta = await api.get('/usuarios/perfil')
+        const usuarioCarregado = resposta.data.usuario
+
+        if (ativo) {
+          setUsuario(usuarioCarregado)
+          setFormulario({
+            nome: usuarioCarregado.nome || '',
+            email: usuarioCarregado.email || '',
+            telefone: usuarioCarregado.telefone || ''
+          })
+        }
+      } catch (error) {
+        if (ativo) {
+          setErro(
+            error.response?.data?.mensagem ||
+            'Não foi possível carregar os dados do perfil.'
+          )
+        }
+      } finally {
+        if (ativo) setCarregando(false)
+      }
+    }
+
+    carregarPerfil()
+
+    return () => {
+      ativo = false
+    }
+  }, [])
+
+  function atualizarFormulario(evento) {
+    const { name, value } = evento.target
 
     setFormulario((anterior) => ({
       ...anterior,
-      [name]: value,
+      [name]: value
     }))
   }
 
-  function salvarPerfil(event) {
-    event.preventDefault()
+  async function salvarPerfil(evento) {
+    evento.preventDefault()
+    setErro('')
+    setMensagem('')
 
-    const usuarioAtualizado = {
-      ...usuarioSalvo,
-      ...formulario,
+    try {
+      setSalvando(true)
+      const resposta = await api.patch('/usuarios/perfil', {
+        nome: formulario.nome.trim(),
+        email: formulario.email.trim(),
+        telefone: formulario.telefone.trim()
+      })
+      const usuarioAtualizado = resposta.data.usuario
+
+      setUsuario(usuarioAtualizado)
+      setFormulario({
+        nome: usuarioAtualizado.nome || '',
+        email: usuarioAtualizado.email || '',
+        telefone: usuarioAtualizado.telefone || ''
+      })
+      localStorage.setItem('usuario', JSON.stringify(usuarioAtualizado))
+      setMensagem(resposta.data.mensagem || 'Seus dados foram atualizados com sucesso!')
+    } catch (error) {
+      setErro(
+        error.response?.data?.mensagem ||
+        'Não foi possível salvar as alterações do perfil.'
+      )
+    } finally {
+      setSalvando(false)
     }
+  }
 
-    localStorage.setItem(
-      'usuario',
-      JSON.stringify(usuarioAtualizado)
-    )
-
-    setMensagem('Seus dados foram atualizados com sucesso!')
+  if (carregando) {
+    return <p role="status">Carregando perfil...</p>
   }
 
   return (
@@ -52,118 +106,19 @@ function Perfil() {
 
       <div className="row g-4">
         <div className="col-lg-8">
-          <div className="card border-0 shadow-sm">
-            <div className="card-body p-4">
-              <h4 className="mb-1">Informações pessoais</h4>
-
-              <p className="text-secondary mb-4">
-                Mantenha seus dados sempre atualizados.
-              </p>
-
-              {mensagem && (
-                <div className="alert alert-success">
-                  {mensagem}
-                </div>
-              )}
-
-              <form onSubmit={salvarPerfil}>
-                <div className="mb-3">
-                  <label className="form-label">
-                    Nome completo
-                  </label>
-
-                  <input
-                    type="text"
-                    name="nome"
-                    className="form-control"
-                    value={formulario.nome}
-                    onChange={atualizarFormulario}
-                    required
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <label className="form-label">
-                    E-mail
-                  </label>
-
-                  <input
-                    type="email"
-                    name="email"
-                    className="form-control"
-                    value={formulario.email}
-                    onChange={atualizarFormulario}
-                    required
-                  />
-                </div>
-
-                <div className="mb-4">
-                  <label className="form-label">
-                    Telefone
-                  </label>
-
-                  <input
-                    type="tel"
-                    name="telefone"
-                    className="form-control"
-                    placeholder="(00) 00000-0000"
-                    value={formulario.telefone}
-                    onChange={atualizarFormulario}
-                  />
-                </div>
-
-                <button type="submit" className="btn btn-danger">
-                  Salvar alterações
-                </button>
-              </form>
-            </div>
-          </div>
+          <PerfilFormulario
+            formulario={formulario}
+            mensagem={mensagem}
+            erro={erro}
+            salvando={salvando}
+            onCampoChange={atualizarFormulario}
+            onSubmit={salvarPerfil}
+          />
         </div>
 
         <div className="col-lg-4">
-          <div className="card border-0 shadow-sm">
-            <div className="card-body p-4">
-              <div className="profile-avatar">
-                {formulario.nome.charAt(0).toUpperCase() || '?'}
-              </div>
-
-              <h5 className="text-center mt-3 mb-1">
-                {formulario.nome || 'Usuário'}
-              </h5>
-
-              <p className="text-secondary text-center small">
-                {formulario.email}
-              </p>
-
-              <hr />
-
-              <div className="profile-info">
-                <span>Identificação da conta</span>
-                <strong>#{usuarioSalvo.id || '—'}</strong>
-              </div>
-
-              <div className="profile-info">
-                <span>Tipo de conta</span>
-                <strong>Oficina</strong>
-              </div>
-
-              <div className="profile-info">
-                <span>Situação</span>
-                <span className="badge bg-success">Ativa</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="card border-0 shadow-sm mt-4">
-            <div className="card-body p-4">
-              <h5>Segurança</h5>
-
-              <p className="text-secondary small mb-0">
-                A alteração de senha será disponibilizada
-                posteriormente, durante a integração com o backend.
-              </p>
-            </div>
-          </div>
+          {usuario && <PerfilResumo usuario={usuario} formulario={formulario} />}
+          <PerfilSeguranca />
         </div>
       </div>
     </div>

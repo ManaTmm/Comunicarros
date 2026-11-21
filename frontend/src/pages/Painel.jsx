@@ -1,88 +1,93 @@
-import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import PainelBoasVindas from '../components/painel/PainelBoasVindas'
+import PainelCabecalho from '../components/painel/PainelCabecalho'
+import PainelIndicadores from '../components/painel/PainelIndicadores'
+import api from '../services/api'
 
 function Painel() {
-  const usuario = JSON.parse(
-    localStorage.getItem('usuario') || '{}'
-  )
+  const [usuario, setUsuario] = useState({})
+  const [resumo, setResumo] = useState({
+    pecas: 0,
+    servicos: 0,
+    oficinaCadastrada: false
+  })
+  const [carregando, setCarregando] = useState(true)
+  const [erro, setErro] = useState('')
+
+  useEffect(() => {
+    let ativo = true
+
+    async function carregarPainel() {
+      try {
+        setErro('')
+        const [respostaPerfil, respostaOficinas] = await Promise.all([
+          api.get('/usuarios/perfil'),
+          api.get('/oficinas')
+        ])
+
+        const usuarioCarregado = respostaPerfil.data.usuario
+        const oficinas = respostaOficinas.data.oficinas || []
+        const oficina = oficinas[0]
+
+        if (ativo) {
+          setUsuario(usuarioCarregado)
+          localStorage.setItem('usuario', JSON.stringify(usuarioCarregado))
+        }
+
+        if (!oficina) {
+          if (ativo) {
+            setResumo({
+              pecas: 0,
+              servicos: 0,
+              oficinaCadastrada: false
+            })
+          }
+          return
+        }
+
+        const [respostaPecas, respostaServicos] = await Promise.all([
+          api.get(`/pecas/oficina/${oficina.id}`),
+          api.get(`/servicos/oficina/${oficina.id}`)
+        ])
+
+        if (ativo) {
+          setResumo({
+            pecas: (respostaPecas.data.pecas || []).length,
+            servicos: (respostaServicos.data.servicos || []).length,
+            oficinaCadastrada: true
+          })
+        }
+      } catch (error) {
+        if (ativo) {
+          setErro(
+            error.response?.data?.mensagem ||
+            'Não foi possível carregar o resumo do painel.'
+          )
+        }
+      } finally {
+        if (ativo) setCarregando(false)
+      }
+    }
+
+    carregarPainel()
+
+    return () => {
+      ativo = false
+    }
+  }, [])
 
   return (
     <div>
+      <PainelCabecalho nome={usuario.nome} />
+      <PainelBoasVindas oficinaCadastrada={resumo.oficinaCadastrada} />
 
-      <div className="dashboard-header">
-        <div>
-          <span className="dashboard-greeting">
-            PAINEL ADMINISTRATIVO
-          </span>
-
-          <h1>Bem-vindo, {usuario.nome}!</h1>
-
-          <p className="text-secondary">
-            Gerencie sua oficina e acompanhe suas atividades.
-          </p>
+      {erro && (
+        <div className="alert alert-danger" role="alert">
+          {erro}
         </div>
-      </div>
+      )}
 
-      <section className="dashboard-welcome">
-
-        <div>
-          <span className="dashboard-greeting">
-            PRIMEIROS PASSOS
-          </span>
-
-          <h2>Vamos configurar sua oficina?</h2>
-
-          <p>
-            Cadastre as informações da sua oficina para começar
-            a divulgar seus produtos e serviços no Comunicarros.
-          </p>
-
-          <Link
-            to="/painel/oficina"
-            className="btn btn-danger"
-          >
-            Cadastrar minha oficina
-          </Link>
-        </div>
-
-        <div className="dashboard-welcome-icon">
-          ⚙
-        </div>
-
-      </section>
-
-      <div className="dashboard-section-header">
-        <h4>Visão geral</h4>
-        <span>Resumo da sua oficina</span>
-      </div>
-
-      <div className="row g-4">
-
-        <div className="col-md-4">
-          <div className="dashboard-stat">
-            <span className="stat-icon">▤</span>
-            <p>Peças cadastradas</p>
-            <h3>—</h3>
-          </div>
-        </div>
-
-        <div className="col-md-4">
-          <div className="dashboard-stat">
-            <span className="stat-icon">🔧</span>
-            <p>Serviços cadastrados</p>
-            <h3>—</h3>
-          </div>
-        </div>
-
-        <div className="col-md-4">
-          <div className="dashboard-stat">
-            <span className="stat-icon">⚙</span>
-            <p>Oficina</p>
-            <h3>Pendente</h3>
-          </div>
-        </div>
-
-      </div>
-
+      <PainelIndicadores resumo={resumo} carregando={carregando} />
     </div>
   )
 }

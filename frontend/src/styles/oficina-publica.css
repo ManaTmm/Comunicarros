@@ -1,0 +1,77 @@
+/* Página individual da oficina */
+
+.oficina-banner {
+  background: linear-gradient(135deg, #ffffff 0%, #f4e9ea 100%);
+  border-bottom: 1px solid var(--cor-borda);
+}
+
+.oficina-avatar-large {
+  width: 75px;
+  height: 75px;
+  font-size: 32px;
+}
+
+.oficina-section {
+  background-color: white;
+  border: 1px solid var(--cor-borda);
+  border-radius: 14px;
+  padding: 25px;
+}
+
+.produto-card {
+  border: 1px solid var(--cor-borda);
+  border-radius: 12px;
+  overflow: hidden;
+  height: 100%;
+  transition: transform 0.2s;
+}
+
+.produto-card:hover {
+  transform: translateY(-3px);
+}
+
+.produto-placeholder {
+  height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f4e9ea;
+  color: var(--cor-principal);
+  font-size: 42px;
+}
+
+.produto-preco {
+  color: var(--cor-principal);
+  font-size: 17px;
+}
+
+.servico-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 18px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 10px;
+}
+
+.contato-card {
+  background-color: white;
+  border: 1px solid var(--cor-borda);
+  border-radius: 14px;
+  padding: 25px;
+  position: sticky;
+  top: 20px;
+}
+
+.info-label {
+  color: var(--cor-texto-secundario);
+  font-size: 12px;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.info-label + p {
+  font-weight: 500;
+  margin-bottom: 0;
+}

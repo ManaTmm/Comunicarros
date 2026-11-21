@@ -1,14 +1,14 @@
 const express = require('express')
-const { cadastrarUsuario } = require('../controllers/usuarioController')
+const {
+    cadastrarUsuario,
+    obterPerfilUsuario,
+    atualizarPerfilUsuario
+} = require('../controllers/usuarioController')
 const router = express.Router()
 const autenticarUsuario = require('../middlewares/authMiddleware')
 
-router.get('/perfil', autenticarUsuario, (req, res) => {
-    res.status(200).json({
-        mensagem: 'Acesso autorizado!',
-        usuario: req.usuario
-    })
-})
+router.get('/perfil', autenticarUsuario, obterPerfilUsuario)
+router.patch('/perfil', autenticarUsuario, atualizarPerfilUsuario)
 
 router.post('/', cadastrarUsuario)
 

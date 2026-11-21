@@ -1,0 +1,45 @@
+/* Escolha de público */
+
+.publico-card {
+  height: 100%;
+  background-color: white;
+  border: 1px solid var(--cor-borda);
+  border-radius: 14px;
+  padding: 35px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.publico-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
+}
+
+.publico-card.oficina {
+  background: linear-gradient(135deg, #ffffff, #f4e9ea);
+}
+
+.publico-icon {
+  width: 55px;
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f4e9ea;
+  color: var(--cor-principal);
+  border-radius: 12px;
+  font-size: 27px;
+  margin-bottom: 22px;
+}
+
+.publico-card h3 {
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.publico-card p {
+  color: var(--cor-texto-secundario);
+  font-size: 14px;
+  line-height: 1.7;
+  min-height: 72px;
+  margin-bottom: 25px;
+}

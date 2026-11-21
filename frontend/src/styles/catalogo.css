@@ -1,0 +1,143 @@
+/* Navbar */
+
+.navbar-brand {
+  color: var(--cor-escura);
+  letter-spacing: -1px;
+}
+
+/* Apresentação inicial */
+
+.hero-section {
+  background: linear-gradient(135deg, #ffffff 0%, #f4e9ea 100%);
+  border-bottom: 1px solid var(--cor-borda);
+}
+
+.hero-card {
+  background-color: white;
+  padding: 40px;
+  border-radius: 16px;
+  border: 1px solid var(--cor-borda);
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.05);
+}
+
+.hero-card-icon {
+  font-size: 42px;
+  color: var(--cor-principal);
+  margin-bottom: 20px;
+}
+
+/* Pesquisa */
+
+.search-box {
+  display: flex;
+  gap: 12px;
+  background-color: white;
+  padding: 12px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 12px;
+}
+
+.search-box input {
+  border: none;
+  box-shadow: none !important;
+  padding: 12px;
+}
+
+.search-box button {
+  min-width: 110px;
+}
+
+/* Botões */
+
+.btn-danger {
+  background-color: var(--cor-principal);
+  border-color: var(--cor-principal);
+}
+
+.btn-danger:hover {
+  background-color: var(--cor-destaque);
+  border-color: var(--cor-destaque);
+}
+
+.btn-outline-danger {
+  color: var(--cor-principal);
+  border-color: var(--cor-principal);
+}
+
+.btn-outline-danger:hover {
+  background-color: var(--cor-principal);
+  border-color: var(--cor-principal);
+}
+
+/* Cartões de oficinas */
+
+.oficina-card {
+  height: 100%;
+  background-color: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-radius: 14px;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.oficina-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
+}
+
+.oficina-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 20px 10px;
+}
+
+.oficina-avatar {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f4e9ea;
+  color: var(--cor-principal);
+  border-radius: 12px;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.oficina-status {
+  font-size: 11px;
+  color: var(--cor-principal);
+  background-color: #f4e9ea;
+  padding: 6px 10px;
+  border-radius: 20px;
+}
+
+.oficina-card-body {
+  padding: 15px 20px;
+}
+
+.oficina-descricao {
+  color: var(--cor-texto-secundario);
+  font-size: 14px;
+  min-height: 42px;
+}
+
+.oficina-servicos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 18px;
+}
+
+.servico-tag {
+  background-color: #f3f3f3;
+  color: #555;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.oficina-card-footer {
+  padding: 15px 20px 20px;
+}

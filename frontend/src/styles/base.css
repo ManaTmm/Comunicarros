@@ -1,0 +1,36 @@
+:root {
+  font-family: Arial, Helvetica, sans-serif;
+
+  color: #1c1c20;
+  background-color: #f3f3f3;
+
+  --cor-principal: #781e2b;
+  --cor-destaque: #a52a3a;
+  --cor-escura: #1c1c20;
+  --cor-fundo: #f3f3f3;
+  --cor-superficie: #ffffff;
+  --cor-texto-secundario: #777777;
+  --cor-borda: #e5e5e5;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: var(--cor-fundo);
+  color: var(--cor-escura);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}

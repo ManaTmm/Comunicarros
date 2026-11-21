@@ -1,0 +1,56 @@
+.modal-backdrop-custom {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  z-index: 1050;
+}
+
+.modal-content-custom {
+  background: #fff;
+  width: 100%;
+  max-width: 550px;
+  padding: 28px;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.profile-avatar {
+  width: 90px;
+  height: 90px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: var(--cor-principal);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: bold;
+}
+
+.profile-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.profile-info:last-child {
+  margin-bottom: 0;
+}
+
+.profile-info span:first-child {
+  color: var(--cor-texto-secundario);
+  font-size: 14px;
+}
+
+.profile-info strong {
+  font-size: 14px;
+}
